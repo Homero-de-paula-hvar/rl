@@ -1,14 +1,4 @@
 #!/usr/bin/env python3
-"""
-Exemplo básico de uso do Auto RL Framework
-==========================================
-
-Este exemplo demonstra como usar o framework para:
-1. Carregar dados
-2. Executar algoritmos de RL
-3. Otimizar hiperparâmetros
-4. Comparar resultados
-"""
 
 import sys
 import os

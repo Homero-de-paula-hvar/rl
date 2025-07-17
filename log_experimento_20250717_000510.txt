@@ -1,6 +1,0 @@
-🤖 AutoRL Web Application
-========================================
-Acesse: http://localhost:8080
-========================================
- * Serving Flask app 'web_app'
- * Debug mode: on
