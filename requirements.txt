@@ -1,0 +1,14 @@
+torch
+stable-baselines3
+deap
+pandas
+numpy
+matplotlib
+seaborn
+streamlit
+plotly
+scikit-learn
+gymnasium
+optuna
+psuti
+tqdm

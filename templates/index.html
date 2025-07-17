@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoRL Framework - Dashboard Avançado</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🤖 Auto Reinforcement Learning Framework</h1>
+            <p>Dashboard Avançado para Experimentos de AutoRL com Otimização Evolutiva de Hiperparâmetros</p>
+        </header>
+
+        <main>
+            <!-- Seção 1: Upload de Dados -->
+            <section class="card">
+                <h2>📊 Gerenciamento de Dados de Entrada</h2>
+                <div class="data-options">
+                    <label>
+                        <input type="radio" name="data_source" value="sample" checked>
+                        Usar dados de exemplo (Campanhas de Marketing)
+                    </label>
+                    <label>
+                        <input type="radio" name="data_source" value="upload">
+                        Fazer upload de arquivos CSV customizados
+                    </label>
+                </div>
+
+                <div id="upload-section" style="display: none;">
+                    <div class="upload-area">
+                        <div class="upload-group">
+                            <label for="control-file">📈 Grupo de Controle (CSV):</label>
+                            <input type="file" id="control-file" accept=".csv">
+                        </div>
+                        <div class="upload-group">
+                            <label for="test-file">🧪 Grupo de Teste (CSV):</label>
+                            <input type="file" id="test-file" accept=".csv">
+                        </div>
+                        <button onclick="uploadFiles()" class="btn btn-primary">📤 Upload Arquivos</button>
+                    </div>
+                </div>
+
+                <div id="data-preview" class="data-preview">
+                    <h3>📋 Prévia dos Dados de Entrada</h3>
+                    <div class="preview-tables">
+                        <div class="preview-table">
+                            <h4>📊 Grupo de Controle</h4>
+                            <div id="control-preview"></div>
+                        </div>
+                        <div class="preview-table">
+                            <h4>🧪 Grupo de Teste</h4>
+                            <div id="test-preview"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Seção 2: Configuração do Experimento -->
+            <section class="card">
+                <h2>⚙️ Configuração do Experimento de AutoRL</h2>
+                <div class="config-grid">
+                    <div class="config-group">
+                        <label for="algorithm">🎯 Algoritmo de Reinforcement Learning:</label>
+                        <select id="algorithm">
+                            <option value="epsilon_greedy">Epsilon-Greedy (Exploração vs Exploração)</option>
+                            <option value="ucb">UCB1 (Upper Confidence Bound)</option>
+                            <option value="thompson">Thompson Sampling (Bayesiano)</option>
+                            <option value="ab_test">A/B Test Agent (Clássico)</option>
+                        </select>
+                    </div>
+
+                    <div class="config-group">
+                        <label for="optimizer">🧬 Otimizador Evolutivo:</label>
+                        <select id="optimizer">
+                            <option value="genetic">Algoritmo Genético (Seleção Natural)</option>
+                            <option value="pso">PSO (Particle Swarm Optimization)</option>
+                            <option value="differential_evolution">Evolução Diferencial</option>
+                            <option value="grid_search">Grid Search</option>
+                            <option value="random_search">Random Search</option>
+                            <option value="bayesian_optimization">Bayesian Optimization</option>
+                        </select>
+                    </div>
+
+                    <div class="config-group">
+                        <label for="generations">🔄 Gerações de Otimização:</label>
+                        <input type="range" id="generations" min="5" max="100" value="20">
+                        <span id="generations-value">20</span>
+                    </div>
+
+                    <div class="config-group">
+                        <label for="iterations">🔄 Execuções por Combinação:</label>
+                        <input type="range" id="iterations" min="1" max="10" value="3">
+                        <span id="iterations-value">3</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Seção 3: Execução -->
+            <section class="card">
+                <h2>🚀 Execução do Experimento de AutoRL</h2>
+                <button onclick="runExperiment()" class="btn btn-success btn-large">
+                    🚀 Executar Experimento de AutoRL
+                </button>
+                
+                <div id="progress-section" style="display: none;">
+                    <div class="progress-bar">
+                        <div id="progress-fill"></div>
+                    </div>
+                    <p id="progress-text">🔄 Preparando experimento...</p>
+                </div>
+            </section>
+
+            <!-- Seção 4: Configuração do Experimento -->
+            <section class="card" id="experiment-config-section" style="display: none;">
+                <h2>📋 Configuração do Experimento Executado</h2>
+                <div class="config-summary">
+                    <div class="config-item">
+                        <strong>🎯 Algoritmo RL:</strong> <span id="exp-algorithm">-</span>
+                    </div>
+                    <div class="config-item">
+                        <strong>🧬 Otimizador:</strong> <span id="exp-optimizer">-</span>
+                    </div>
+                    <div class="config-item">
+                        <strong>🔄 Gerações:</strong> <span id="exp-generations">-</span>
+                    </div>
+                    <div class="config-item">
+                        <strong>🔄 Iterações:</strong> <span id="exp-iterations">-</span>
+                    </div>
+                    <div class="config-item">
+                        <strong>📊 Fonte de Dados:</strong> <span id="exp-data-source">-</span>
+                    </div>
+                    <div class="config-item">
+                        <strong>🎯 Métrica de Recompensa:</strong> <span id="exp-reward-metric">-</span>
+                    </div>
+                    <div class="config-item">
+                        <strong>🎯 Objetivo de Otimização:</strong> <span id="exp-optimization-goal">-</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Seção 5: Estatísticas dos Dados -->
+            <section class="card" id="data-stats-section" style="display: none;">
+                <h2>📊 Estatísticas dos Dados de Entrada</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3>📈 Campanhas</h3>
+                        <p id="total-campaigns">-</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>📅 Dias de Dados</h3>
+                        <p id="total-days">-</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>💰 Gasto Total</h3>
+                        <p id="total-spend">-</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>🛒 Compras Médias</h3>
+                        <p id="avg-purchases">-</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>📈 ROI Médio</h3>
+                        <p id="avg-roi">-</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>🎯 Taxa de Conversão</h3>
+                        <p id="conversion-rate">-</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Seção 6: Métricas de Treinamento -->
+            <section class="card" id="training-metrics-section" style="display: none;">
+                <h2>📈 Métricas de Treinamento e Otimização</h2>
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <h3>🔄 Execuções</h3>
+                        <p><strong>Total:</strong> <span id="total-iterations">-</span></p>
+                        <p><strong>Bem-sucedidas:</strong> <span id="successful-runs">-</span></p>
+                        <p><strong>Falharam:</strong> <span id="failed-runs">-</span></p>
+                    </div>
+                    <div class="metric-card">
+                        <h3>📊 Convergência</h3>
+                        <p><strong>Taxa de Convergência:</strong> <span id="convergence-rate">-</span></p>
+                        <p><strong>Desvio Padrão Recompensa:</strong> <span id="std-reward">-</span></p>
+                        <p><strong>Desvio Padrão Regret:</strong> <span id="std-regret">-</span></p>
+                    </div>
+                    <div class="metric-card">
+                        <h3>📈 Melhorias</h3>
+                        <p><strong>Melhoria na Recompensa:</strong> <span id="reward-improvement">-</span></p>
+                        <p><strong>Redução no Regret:</strong> <span id="regret-reduction">-</span></p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Seção 7: Hiperparâmetros Otimizados -->
+            <section class="card" id="optimized-params-section" style="display: none;">
+                <h2>🔧 Hiperparâmetros Otimizados</h2>
+                <div class="params-container">
+                    <div class="params-card">
+                        <h3>🎯 Melhores Parâmetros Encontrados</h3>
+                        <div id="optimized-parameters"></div>
+                    </div>
+                    <div class="params-card">
+                        <h3>🏆 Melhor Execução</h3>
+                        <div id="best-run-details"></div>
+                    </div>
+                    <div class="params-card">
+                        <h3>⚠️ Pior Execução</h3>
+                        <div id="worst-run-details"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Seção 8: Resultados e Visualização -->
+            <section class="card">
+                <h2>📊 Resultados e Visualização dos Experimentos</h2>
+                <div id="results-section" style="display: none;">
+                    <div class="results-summary">
+                        <div class="summary-card">
+                            <h3>🔄 Total de Execuções</h3>
+                            <p id="total-runs">-</p>
+                        </div>
+                        <div class="summary-card">
+                            <h3>📈 Recompensa Média</h3>
+                            <p id="avg-reward">-</p>
+                        </div>
+                        <div class="summary-card">
+                            <h3>🏆 Melhor Recompensa</h3>
+                            <p id="best-reward">-</p>
+                        </div>
+                        <div class="summary-card">
+                            <h3>⚠️ Pior Recompensa</h3>
+                            <p id="worst-reward">-</p>
+                        </div>
+                        <div class="summary-card">
+                            <h3>😔 Arrependimento Médio</h3>
+                            <p id="avg-regret">-</p>
+                        </div>
+                        <div class="summary-card">
+                            <h3>🎯 Melhor Arrependimento</h3>
+                            <p id="best-regret">-</p>
+                        </div>
+                    </div>
+
+                    <div class="charts-container">
+                        <div class="chart-wrapper">
+                            <h3>📈 Evolução das Recompensas por Iteração</h3>
+                            <canvas id="reward-chart"></canvas>
+                        </div>
+                        <div class="chart-wrapper">
+                            <h3>😔 Evolução do Arrependimento por Iteração</h3>
+                            <canvas id="regret-chart"></canvas>
+                        </div>
+                        <div class="chart-wrapper">
+                            <h3>🎯 Distribuição de Recompensas</h3>
+                            <canvas id="reward-distribution-chart"></canvas>
+                        </div>
+                        <div class="chart-wrapper">
+                            <h3>📊 Comparação: Recompensa vs Arrependimento</h3>
+                            <canvas id="reward-vs-regret-chart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="results-table">
+                        <h3>📋 Tabela Detalhada de Resultados</h3>
+                        <div id="results-table"></div>
+                    </div>
+
+                    <div class="actions">
+                        <button onclick="downloadResults()" class="btn btn-secondary">
+                            📥 Download CSV dos Resultados
+                        </button>
+                        <button onclick="downloadReport()" class="btn btn-primary">
+                            📄 Gerar Relatório Completo
+                        </button>
+                    </div>
+                </div>
+
+                <div id="no-results">
+                    <p>🚀 Execute um experimento para ver os resultados detalhados.</p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html> 
