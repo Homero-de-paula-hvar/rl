@@ -10,7 +10,7 @@ import os
 from datetime import datetime
 
 from .simulator import MABSimulator
-from ..rl_algs import EpsilonGreedy, UCB1, ThompsonSampling
+from ..rl_algs import EpsilonGreedy, UCB1, ThompsonSampling, ContextualThompsonSampling
 from ..optimizers import GeneticAlgorithm, PSO, DifferentialEvolution, BayesianOptimization, GridSearch, RandomSearch, BaseSimpleOptimizer
 
 
@@ -40,7 +40,10 @@ class AutoRLEngine:
                 'epsilon': (0.01, 0.5)
             },
             'ucb': {},  # UCB1 não tem parâmetros para otimizar
-            'thompson': {}  # Thompson Sampling não tem parâmetros para otimizar
+            'thompson': {},  # Thompson Sampling não tem parâmetros para otimizar
+            'contextual_thompson': {
+                'v': (0.01, 5.0)
+            }
         }
         
         # Define optimizers
@@ -61,6 +64,11 @@ class AutoRLEngine:
             return UCB1(n_arms=self.n_arms)
         elif algorithm_type == 'thompson':
             return ThompsonSampling(n_arms=self.n_arms)
+        elif algorithm_type == 'contextual_thompson':
+            # context_dim = 2 (bias + iteração) por padrão
+            context_dim = 2
+            v = params.get('v', 1.0)
+            return ContextualThompsonSampling(n_arms=self.n_arms, context_dim=context_dim, v=v)
         else:
             raise ValueError(f"Unknown algorithm type: {algorithm_type}")
     

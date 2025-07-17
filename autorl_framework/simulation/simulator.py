@@ -2,6 +2,7 @@
 
 import pandas as pd
 from autorl_framework.rl_algs.base import BaseRLAlgorithm
+import numpy as np
 
 class MABSimulator:
     """
@@ -43,14 +44,22 @@ class MABSimulator:
         
         # Loop de Simulação: itera sobre cada dia do experimento 
         for t in range(self.horizon):
-            # 1. O agente decide qual braço puxar 
-            chosen_arm_idx = algorithm.select_arm()
+            # Definir contexto: bias + iteração
+            context = np.array([1, t+1])
+            # 1. O agente decide qual braço puxar
+            if hasattr(algorithm, 'select_arm') and 'context' in algorithm.select_arm.__code__.co_varnames:
+                chosen_arm_idx = algorithm.select_arm(context)
+            else:
+                chosen_arm_idx = algorithm.select_arm()
             
             # 2. Observamos a recompensa do braço escolhido no dataset histórico 
             reward = self.reward_history.iloc[t, chosen_arm_idx]
             
             # 3. O algoritmo atualiza seu conhecimento 
-            algorithm.update(chosen_arm_idx, reward)
+            if hasattr(algorithm, 'update') and 'context' in algorithm.update.__code__.co_varnames:
+                algorithm.update(chosen_arm_idx, reward, context)
+            else:
+                algorithm.update(chosen_arm_idx, reward)
             
             # 4. Cálculo do arrependimento (regret)
             # Como temos feedback completo, sabemos a recompensa do melhor braço naquele dia 
