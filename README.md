@@ -1,4 +1,4 @@
-# 🤖 Auto Reinforcement Learning Framework
+git # 🤖 Auto Reinforcement Learning Framework
 
 Framework completo para experimentação, comparação e otimização automática de algoritmos de Multi-Armed Bandit (MAB) com interface web moderna, suporte a diversos otimizadores e logging detalhado.
 
@@ -121,4 +121,4 @@ print(f"Resultados salvos em: {log_file}")
 
 ## 📝 Licença
 
-MIT
+UFOP
